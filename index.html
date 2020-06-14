@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Maze</title>
+</head>
+<body>
+    <h1 style="text-align: center; padding-top: 20px; " class="display-4"> Maze </h1>
+
+    <div style="width: 45%; margin:auto; text-align: center;">
+        <div style="margin-top:20px; margin-bottom: 35px;">
+            <div style="display: inline-block" >
+                <select id="size" class="form-control">
+                    <optgroup label="Size">
+                        <option selected="selected">10x10</option>
+                        <option>20x20</option>
+                    </optgroup>
+                </select>
+            </div>
+            <div style="display: inline-block" >
+                <select id="speed" class="form-control">
+                    <optgroup label="Speed">
+                        <option>0.25x</option>
+                        <option>0.5x</option>
+                        <option selected="selected">1x</option>
+                        <option>2x</option>
+                        <option>4x</option>
+                    </optgroup>
+                </select>
+            </div>
+            <button id="createButton" class="btn" onclick="generateMaze()">Create</button>
+            <button id="solveButton" class="btn" disabled onclick="solveMaze()">Solve</button>
+        </div>
+        <table id="maze-grid" class="table table-bordered"></table>
+    </div>
+
+    <!-- include jQuery-->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!-- include our own JS file -->
+    <script src="create.js"></script>
+    <script src="solve.js"></script>
+</body>
+</html>
