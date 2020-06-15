@@ -11,26 +11,28 @@
     <h1 style="text-align: center; padding-top: 20px; " class="display-4"> Maze </h1>
 
     <div style="width: 45%; margin:auto; text-align: center;">
-        <div style="margin-top:20px; margin-bottom: 35px;">
-            <div style="display: inline-block" >
+        <div style="margin-top:20px; margin-bottom: 35px; display: flex;">
+
                 <select id="size" class="form-control">
                     <optgroup label="Size">
-                        <option selected="selected">10x10</option>
-                        <option>20x20</option>
+                        <option value="4"> 4x4 </option>
+                        <option value="10" selected="selected">10x10</option>
+                        <option value="20" >20x20</option> 
                     </optgroup>
                 </select>
-            </div>
-            <div style="display: inline-block" >
+
+
                 <select id="speed" class="form-control">
                     <optgroup label="Speed">
-                        <option>0.25x</option>
-                        <option>0.5x</option>
-                        <option selected="selected">1x</option>
-                        <option>2x</option>
-                        <option>4x</option>
+                        <option value="160">0.25x</option>
+                        <option value="80">0.5x</option>
+                        <option value="40">1x</option>
+                        <option value="20">2x</option>
+                        <option value="10">4x</option>
+                        <option value="2" selected="selected">Super-Omega Fast</option>
                     </optgroup>
                 </select>
-            </div>
+
             <button id="createButton" class="btn" onclick="generateMaze()">Create</button>
             <button id="solveButton" class="btn" disabled onclick="solveMaze()">Solve</button>
         </div>

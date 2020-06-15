@@ -4,20 +4,16 @@ console.log("Creating Maze")
 let gridSize = 10;
 let cellHeight = 50;
 let mazeGrid = jQuery("#maze-grid");
+let mazeState = [];
 let i = 1;
-let speed = 100;
+let speed = $("#speed").val();
 
 function createGrid() {
-    let size = $("#size").val();
-    switch (size){
-        case "10x10":
-            gridSize = 10;
-            cellHeight = 50;
-            break;
-        case "20x20":
-            gridSize = 20;
-            cellHeight = 25;
-            break;
+    gridSize = $("#size").val();
+    if (gridSize == 20){
+        cellHeight = 25;
+    } else {
+        cellHeight = 50;
     }
     for (var x = 0; x < gridSize; x++)
     {
@@ -37,44 +33,28 @@ createGrid();
 
 
 function generateMaze() {
-    let inputSpeed = $("#speed").val();
-    switch (inputSpeed){
-        case "0.25x":
-            speed = 160;
-            break;
-        case "0.5x":
-            speed = 80;
-            break;
-        case "1x":
-            speed = 40;
-            break;
-        case "2x":
-            speed = 20;
-            break;
-        case "4x":
-            speed = 10;
-            break;
-        default:
-            speed = 80;
-            break;
-    }
+    speed = $("#speed").val();
     $("#solveButton").prop("disabled", true);
     $("#createButton").prop("disabled", true);
     mazeGrid.empty();
     createGrid();
     i = 1;
     let visitGrid = [];
+    mazeState = [];
     for (let y = 0; y < gridSize; y++){
         visitGrid.push([]);
+        mazeState.push([]);
         for (let x = 0; x < gridSize; x++){
             visitGrid[y].push(0);
+            // Boolean values correspond to [up, down, left, right]
+            mazeState[y].push([true, true, true, true]);
         }
     }
     document.getElementById("0-0").style.borderTop = "solid 1px #FFF";
-    createMaze(0, 0, visitGrid);
+    createMaze(Math.floor(Math.random() * gridSize), Math.floor(Math.random() * gridSize), visitGrid);
     $("#" + (gridSize-1).toString() + "-" + (gridSize-1).toString()).css("border-bottom", "solid 1px #FFF");
     setTimeout( function () { $("#createButton").prop("disabled", false); $("#solveButton").prop("disabled", false); }, speed * gridSize * gridSize);
-
+    console.log(visitGrid)
 }
 
 function createMaze(x, y, visitGrid) {
@@ -86,20 +66,21 @@ function createMaze(x, y, visitGrid) {
             case "up":
                 var newX = x-1;
                 if (newX >= 0 && visitGrid[newX][y] === 0){
+                    mazeState[x][y][0] = false;
+                    mazeState[newX][y][1] = false;
                     let id = "#" + newX.toString() + "-" + y.toString();
                     let idn = "#" + x.toString() + "-" + y.toString();
-                    //$(id).css("border-bottom", "solid 1px #FFF");
                     setTimeout( function () {
                         $(id).css("border-bottom", "solid 1px #FFF");
                         $(idn).css("border-top", "solid 1px #FFF"); }, ++i*speed);
-                        // document.getElementById(id).style.borderBottom = "solid 1px #FFF";
-                        // document.getElementById(x.toString() + y.toString()).style.borderTop = "solid 1px #FFF"; }, ++i*100);
                     createMaze(newX, y, visitGrid);
                 }
                 break;
             case "down":
                 var newX = x+1;
                 if (newX < gridSize && visitGrid[newX][y] === 0){
+                    mazeState[x][y][1] = false;
+                    mazeState[newX][y][0] = false;
                     let id = "#" + x.toString() + "-" + y.toString();
                     let idn = "#" + newX.toString() + "-" + y.toString();
                     setTimeout( function () {
@@ -111,6 +92,8 @@ function createMaze(x, y, visitGrid) {
             case "left":
                 var newY = y-1;
                 if (newY >= 0 && visitGrid[x][newY] === 0){
+                    mazeState[x][y][2] = false;
+                    mazeState[x][newY][3] = false;
                     let id = "#" + x.toString() + "-" + newY.toString();
                     let idn = "#" + x.toString() + "-" + y.toString();
                     setTimeout( function () {
@@ -122,6 +105,8 @@ function createMaze(x, y, visitGrid) {
             case "right":
                 var newY = y+1;
                 if (newY < gridSize && visitGrid[x][newY] === 0){
+                    mazeState[x][y][3] = false;
+                    mazeState[x][newY][2] = false;
                     let id = "#" + x.toString() + "-" + y.toString();
                     let idn = "#" + x.toString() + "-" + newY.toString();
                     setTimeout( function () {
