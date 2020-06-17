@@ -1,6 +1,7 @@
 let mazeSolution = [];
 
 function solveMaze() {
+    i = 1;
     console.log(mazeState)
     mazeSolution = [];
     solve(0,0);
@@ -9,7 +10,7 @@ function solveMaze() {
 
 function solve(x, y) {
     mazeSolution.push(x.toString() + "-" + y.toString());
-    $("#" + x.toString() + "-" + y.toString()).css("background-color", "lightgreen");
+    setTimeout( function() { $("#" + x.toString() + "-" + y.toString()).css("background-color", "lightgreen"); }, ++i*speed);
     if (mazeCompleted()){
         return;
     }
@@ -62,8 +63,8 @@ function wallExists(x,y,direction) {
 }
 
 function backtrack() {
-    
-    $("#" + mazeSolution.pop()).css("background-color", "transparent");
+    let id = mazeSolution.pop()
+    setTimeout( function() { $("#" + id).css("background-color", "transparent"); }, ++i*speed);
 }
 
 function mazeCompleted() {
