@@ -1,6 +1,7 @@
 let mazeSolution = [];
 
 function solveMaze() {
+    $("#solveButton").prop("disabled", true);
     i = 1;
     console.log(mazeState)
     mazeSolution = [];

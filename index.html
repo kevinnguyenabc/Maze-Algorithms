@@ -10,35 +10,61 @@
 </head>
 <body>
 
-    <h1 style="text-align: center; padding-top: 20px; " class="display-4"> Maze </h1>
+    <h1 style="text-align: center; padding-top: 10px; " class="display-4"> Maze </h1>
 
-    <div style="width: 45%; margin:auto; text-align: center;">
-        <div style="margin-top:20px; margin-bottom: 35px; display: flex;">
+    <div style="width: 40%; margin:auto; text-align: center; overflow: visible;">
+        <div style="margin-top:20px; margin-bottom: 15px; ">
+            <div class="form-row" style="margin-bottom: 10px;">
+                <div class="col">
+                    <select id="size" class="form-control">
+                        <optgroup label="Size">
+                            <option value="10">10x10</option>
+                            <option value="20" selected="selected">20x20</option>
+                            <option value="30">30x30</option> 
+                        </optgroup>
+                    </select>
+                </div>
 
-                <select id="size" class="form-control">
-                    <optgroup label="Size">
-                        <option value="10" selected="selected">10x10</option>
-                        <option value="20" >20x20</option> 
-                    </optgroup>
-                </select>
+                <div class="col">
+                    <select id="speed" class="form-control">
+                        <optgroup label="Speed">
+                            <option value="160">0.25x</option>
+                            <option value="80">0.5x</option>
+                            <option value="40">1x</option>
+                            <option value="20">2x</option>
+                            <option value="10">4x</option>
+                            <option value="2" selected="selected">Super-Omega Fast</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
 
-
-                <select id="speed" class="form-control">
-                    <optgroup label="Speed">
-                        <option value="160">0.25x</option>
-                        <option value="80">0.5x</option>
-                        <option value="40">1x</option>
-                        <option value="20">2x</option>
-                        <option value="10">4x</option>
-                        <option value="2" selected="selected">Super-Omega Fast</option>
-                    </optgroup>
-                </select>
-
-            <button id="createButton" class="btn" onclick="generateMaze()">Create</button>
-            <button id="solveButton" class="btn" disabled onclick="solveMaze()">Solve</button>
+            <div class="form-row">
+                <div class="col">
+                    <select id="algo" class="form-control form-control-sm" style="margin-bottom: 5px;">
+                        <optgroup label="Generate Algorithm">
+                            <option value="depth">Depth-First</option>
+                            <option value="breadth">Breadth-First</option>
+                        </optgroup>
+                    </select>
+                    <button id="createButton" class="btn btn-sm" onclick="generateMaze()">Create</button>
+                </div>
+    
+                <div class="col">
+                    <select id="solveAlgo" class="form-control form-control-sm" style="margin-bottom: 5px;">
+                        <optgroup label="Solve Algorithm">
+                            <option value="depth">Depth-First</option>
+                        </optgroup>
+                    </select>
+                    <button id="solveButton" class="btn btn-sm" disabled onclick="solveMaze()">Solve</button>
+                </div>
+            </div>
         </div>
-        <table id="maze-grid" class="table table-bordered"></table>
+        
     </div>
+    <table id="maze-grid" class="table table-bordered" style="margin: auto; width: 40%;"></table>
+    <br>
+    <br>
 
     <!-- include jQuery-->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
