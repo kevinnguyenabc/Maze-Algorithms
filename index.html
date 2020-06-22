@@ -18,6 +18,7 @@
                 <div class="col">
                     <select id="size" class="form-control">
                         <optgroup label="Size">
+                            <option value="4">4x4</option>
                             <option value="10">10x10</option>
                             <option value="20" selected="selected">20x20</option>
                             <option value="30">30x30</option> 
@@ -49,11 +50,12 @@
                     </select>
                     <button id="createButton" class="btn btn-sm" onclick="generateMaze()">Create</button>
                 </div>
-    
+
                 <div class="col">
                     <select id="solveAlgo" class="form-control form-control-sm" style="margin-bottom: 5px;">
                         <optgroup label="Solve Algorithm">
                             <option value="depth">Depth-First</option>
+                            <option value="clear">Breadth-First</option>
                         </optgroup>
                     </select>
                     <button id="solveButton" class="btn btn-sm" disabled onclick="solveMaze()">Solve</button>

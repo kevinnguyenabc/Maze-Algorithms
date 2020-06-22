@@ -2,33 +2,44 @@ let mazeSolution = [];
 
 function solveMaze() {
     $("#solveButton").prop("disabled", true);
+    $("#createButton").prop("disabled", true);
     i = 1;
     console.log(mazeState)
     mazeSolution = [];
-    solve(0,0);
-    console.log(mazeSolution);
+    clearMazeSolution();
+    speed = $("#speed").val();
+    let solveAlgo = $("#solveAlgo").val();
+    if (solveAlgo == "depth") {
+        solveDepth(0,0);
+    } else {
+        solveBreadth();
+    }
+    setTimeout( function () { $("#createButton").prop("disabled", false); $("#solveButton").prop("disabled", false); }, ++i*speed);
 }
 
-function solve(x, y) {
+function solveDepth(x, y) {
+    let t0 = performance.now();
     mazeSolution.push(x.toString() + "-" + y.toString());
     setTimeout( function() { $("#" + x.toString() + "-" + y.toString()).css("background-color", "lightgreen"); }, ++i*speed);
     if (mazeCompleted()){
+        let t1 = performance.now();
+        console.log("Solving took " + (t1 - t0) + " miliseconds");
         return;
     }
     for (let i=0; i < 4; i++){
         if (!wallExists(x, y, i) && legalMove(x, y, i)){
             switch(i){
                 case 0:
-                    solve(x-1, y);
+                    solveDepth(x-1, y);
                     break;
                 case 1:
-                    solve(x+1, y); 
+                    solveDepth(x+1, y); 
                     break;
                 case 2:
-                    solve(x, y-1);
+                    solveDepth(x, y-1);
                     break;
                 case 3:
-                    solve(x, y+1);
+                    solveDepth(x, y+1);
                     break;
             }
         }
@@ -72,17 +83,86 @@ function mazeCompleted() {
     let corner = gridSize-1;
     return (mazeSolution.includes("0-0") && mazeSolution.includes(corner.toString() + "-" + corner.toString()));
 }
-/*
 
-SOLVING MAZE:
-First, I need to create some sort of data structure that can hold the information
-about the state of the maze. For now, I think a 2D array, where each element is an array
-of booleans [up, right, down, left] for whether or not a wall exists (so a 3D array).
-Second, I need to keep track of the solution. This can possibly simply be an array
-of solution ids or indices, not sure yet. I want to highlight these in a different color,
-or find another way to create a marking.
-Third, I need to create helper functions. I would need a backtrack function, when the
-algorithm reaches a dead end. I may also need a function to tell me whether or not a
-wall exists or not, in order to keep the algorithm code cleaner.
+function clearMazeSolution() {
+    for (let y = 0; y < gridSize; y++){
+        for (let x = 0; x < gridSize; x++){
+            $("#" + (x).toString() + "-" + (y).toString()).css("background-color", "transparent");
+        }
+    }
+}
 
- */
+function solveBreadth() {
+    let queue = [];
+    let parents = [];
+    let curr = 0;
+    let directions = ["up", "down", "left", "right"];
+    let t0 = performance.now();
+    for (let y = 0; y < gridSize; y++){
+        parents.push([]);
+        for (let x = 0; x < gridSize; x++){
+            parents[y].push(-1);
+        }
+    }
+    queue.push([0,0]);
+    while (queue.length > curr) {  
+        if (isArrayInArray(queue, [gridSize-1, gridSize-1])) {
+            let t1 = performance.now();
+            console.log("Solving took " + (t1 - t0) + " miliseconds");
+            break;
+        }
+        let pair = queue[curr++];
+        let x = pair[0];
+        let y = pair[1];
+        setTimeout( function() { $("#" + x.toString() + "-" + y.toString()).css("background-color", "lightgreen"); }, ++i*speed);
+        console.log("x and y for this loop is " , x, y);
+        for (const direction of directions){
+            switch (direction) {
+                case "up":
+                    if (!wallExists(x, y, 0) && !isArrayInArray(queue, [x-1, y])){
+                        queue.push([x-1, y]);
+                        parents[x-1][y] = [x, y];
+                    }
+                    break;
+                case "down":
+                    if (!wallExists(x, y, 1) && !isArrayInArray(queue, [x+1, y])){
+                        queue.push([x+1, y]);
+                        parents[x+1][y] = [x, y];
+                    }
+                    break;
+                case "left":
+                    if (!wallExists(x, y, 2) && !isArrayInArray(queue, [x, y-1])){
+                        queue.push([x, y-1]);
+                        parents[x][y-1] = [x, y];
+                    }
+                    break;
+                case "right":
+                    if (!wallExists(x, y, 3) && !isArrayInArray(queue, [x, y+1])){
+                        queue.push([x, y+1]);
+                        parents[x][y+1] = [x, y];
+                    }
+                    break;
+            }
+        }
+    }
+    setTimeout( function() { clearMazeSolution(); }, ++i*speed);
+    console.log(parents);
+    setTimeout( function() { $("#" + (gridSize-1).toString() + "-" + (gridSize-1).toString()).css("background-color", "lightgreen"); }, ++i*speed);
+    let sol = parents[gridSize-1][gridSize-1];
+    while (sol !== -1){
+        let x = sol[0];
+        let y = sol[1];
+        setTimeout( function() { $("#" + x.toString() + "-" + y.toString()).css("background-color", "lightgreen"); }, ++i*speed);
+        sol = parents[x][y];
+    }
+}
+
+function isArrayInArray(arr, item){
+    var item_as_string = JSON.stringify(item);
+  
+    var contains = arr.some(function(ele){
+      return JSON.stringify(ele) === item_as_string;
+    });
+    return contains;
+}
+

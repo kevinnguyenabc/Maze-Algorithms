@@ -59,7 +59,7 @@ function generateMaze() {
         createMazeBreadth(Math.floor(Math.random() * gridSize), Math.floor(Math.random() * gridSize), visitGrid);
     }
     $("#" + (gridSize-1).toString() + "-" + (gridSize-1).toString()).css("border-bottom", "solid 1px #FFF");
-    setTimeout( function () { $("#createButton").prop("disabled", false); $("#solveButton").prop("disabled", false); }, speed * gridSize * gridSize);
+    setTimeout( function () { $("#createButton").prop("disabled", false); $("#solveButton").prop("disabled", false); }, ++i*speed);
     console.log(visitGrid)
 }
 
