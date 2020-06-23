@@ -7,6 +7,7 @@ let mazeGrid = jQuery("#maze-grid");
 let mazeState = [];
 let i = 1;
 let speed = $("#speed").val();
+let visitGrid = [];
 
 function createGrid() {
     gridSize = $("#size").val();
@@ -16,11 +17,11 @@ function createGrid() {
     } else {
         cellHeight = 50;
     }
-    for (var x = 0; x < gridSize; x++)
+    for (let x = 0; x < gridSize; x++)
     {
         let rowHTML = "<tr>";
 
-        for(var y = 0; y < gridSize; y++)
+        for(let y = 0; y < gridSize; y++)
         {
 
             rowHTML += '<td height="' + cellHeight + '" style="border: 2px solid black;" id=' + x + "-" + y + '>  </td>';
@@ -35,13 +36,13 @@ createGrid();
 
 function generateMaze() {
     speed = $("#speed").val();
-    algo = $("#algo").val();
+    let algo = $("#algo").val();
     $("#solveButton").prop("disabled", true);
     $("#createButton").prop("disabled", true);
     mazeGrid.empty();
     createGrid();
     i = 1;
-    let visitGrid = [];
+    visitGrid = [];
     mazeState = [];
     for (let y = 0; y < gridSize; y++){
         visitGrid.push([]);
@@ -54,16 +55,17 @@ function generateMaze() {
     }
     document.getElementById("0-0").style.borderTop = "solid 1px #FFF";
     if (algo == "depth"){
-        createMazeDepth(Math.floor(Math.random() * gridSize), Math.floor(Math.random() * gridSize), visitGrid);
-    } else {
-        createMazeBreadth(Math.floor(Math.random() * gridSize), Math.floor(Math.random() * gridSize), visitGrid);
+        createMazeDepth(Math.floor(Math.random() * gridSize), Math.floor(Math.random() * gridSize));
+    } else if (algo === "breadth"){
+        createMazeBreadth(Math.floor(Math.random() * gridSize), Math.floor(Math.random() * gridSize));
+    } else if (algo === "unionfind"){
+        createMazeUnion();
     }
     $("#" + (gridSize-1).toString() + "-" + (gridSize-1).toString()).css("border-bottom", "solid 1px #FFF");
     setTimeout( function () { $("#createButton").prop("disabled", false); $("#solveButton").prop("disabled", false); }, ++i*speed);
-    console.log(visitGrid)
 }
 
-function createMazeDepth(x, y, visitGrid) {
+function createMazeDepth(x, y) {
     let directions = ["up", "down", "left", "right"];
     directions.sort((a,b) => 0.5 - Math.random());
     visitGrid[x][y] = 1;
@@ -73,28 +75,28 @@ function createMazeDepth(x, y, visitGrid) {
                 var newX = x-1;
                 if (newX >= 0 && visitGrid[newX][y] === 0){
                     breakWall(x, y, "up");
-                    createMazeDepth(newX, y, visitGrid);
+                    createMazeDepth(newX, y);
                 }
                 break;
             case "down":
                 var newX = x+1;
                 if (newX < gridSize && visitGrid[newX][y] === 0){
                     breakWall(x, y, "down");
-                    createMazeDepth(newX, y, visitGrid);
+                    createMazeDepth(newX, y);
                 }
                 break;
             case "left":
                 var newY = y-1;
                 if (newY >= 0 && visitGrid[x][newY] === 0){
                     breakWall(x, y, "left");
-                    createMazeDepth(x, newY, visitGrid);
+                    createMazeDepth(x, newY);
                 }
                 break;
             case "right":
                 var newY = y+1;
                 if (newY < gridSize && visitGrid[x][newY] === 0){
                     breakWall(x, y, "right");
-                    createMazeDepth(x, newY, visitGrid);
+                    createMazeDepth(x, newY);
                 }
                 break;
         }
@@ -102,7 +104,7 @@ function createMazeDepth(x, y, visitGrid) {
 }
 
 
-function createMazeBreadth (firstX, firstY, visitGrid) {
+function createMazeBreadth (firstX, firstY) {
     let queue = [];
     queue.push([firstX,firstY]);
     while (queue.length > 0) {
@@ -110,11 +112,9 @@ function createMazeBreadth (firstX, firstY, visitGrid) {
         let pair = queue.shift();
         let x = pair[0];
         let y = pair[1];
-        console.log(x, y);
         visitGrid[x][y] = 1;
         let directions = ["up", "down", "left", "right"];
         for (const direction of directions){
-            console.log(x, y);
             switch (direction){
                 case "up":
                     var newX = x-1;
@@ -146,6 +146,46 @@ function createMazeBreadth (firstX, firstY, visitGrid) {
                     }
             }
         }
+    }
+}
+
+
+function createMazeUnion() {
+    console.log(gridSize);
+    let set = [[gridSize-1, gridSize-2, gridSize-1, gridSize-1]];
+    for (let y = 0; y < (gridSize-1); y++){
+        for (let x = 0; x < (gridSize-1); x++){
+            set.push([x, y, x, y+1]);
+            set.push([x, y, x+1, y]);
+        }
+    }
+    set.sort((a,b) => 0.5 - Math.random());
+    console.log(set);
+    while (set.length > 0) {
+        let cells = set.shift();
+        // Union Algorithm
+        root1 = find(cells[0], cells[1]);
+        root2 = find(cells[2], cells[3]);
+
+        if (!(root1[0] == root2[0] && root1[1] == root2[1])){
+            if (cells[0] != cells[2]){
+                breakWall(cells[0], cells[1], "down");
+            } else {
+                breakWall(cells[0], cells[1], "right");
+            }
+            visitGrid[root1[0]][root1[1]] = root2;
+        }
+    }
+}
+
+
+function find(x, y) {
+    if (visitGrid[x][y] === 0){
+        return [x,y]
+    } else {
+        root = find(visitGrid[x][y][0], visitGrid[x][y][1]);
+        visitGrid[x][y] = root;
+        return root;
     }
 }
 
@@ -184,7 +224,6 @@ function breakWall(x, y, direction) {
         case "right":
             var newY = y+1;
             mazeState[x][y][3] = false;
-            console.log(x, newY);
             mazeState[x][newY][2] = false;
             var id = "#" + x.toString() + "-" + y.toString();
             var idn = "#" + x.toString() + "-" + newY.toString();

@@ -1,38 +1,37 @@
 let mazeSolution = [];
 
 function solveMaze() {
+    speed = $("#speed").val();
+    let solveAlgo = $("#solveAlgo").val();
     $("#solveButton").prop("disabled", true);
     $("#createButton").prop("disabled", true);
     i = 1;
-    console.log(mazeState)
     mazeSolution = [];
     clearMazeSolution();
-    speed = $("#speed").val();
-    let solveAlgo = $("#solveAlgo").val();
+    let t0 = performance.now();
     if (solveAlgo == "depth") {
         solveDepth(0,0);
-    } else {
+    } else if (solveAlgo == "breadth"){
         solveBreadth();
     }
+    let t1 = performance.now();
+    console.log("Solving took " + (t1 - t0) + " miliseconds");
     setTimeout( function () { $("#createButton").prop("disabled", false); $("#solveButton").prop("disabled", false); }, ++i*speed);
 }
 
 function solveDepth(x, y) {
-    let t0 = performance.now();
     mazeSolution.push(x.toString() + "-" + y.toString());
     setTimeout( function() { $("#" + x.toString() + "-" + y.toString()).css("background-color", "lightgreen"); }, ++i*speed);
     if (mazeCompleted()){
-        let t1 = performance.now();
-        console.log("Solving took " + (t1 - t0) + " miliseconds");
         return;
     }
-    for (let i=0; i < 4; i++){
+    for (let i=3; i >= 0; i--){
         if (!wallExists(x, y, i) && legalMove(x, y, i)){
             switch(i){
                 case 0:
                     solveDepth(x-1, y);
                     break;
-                case 1:
+                case 1: 
                     solveDepth(x+1, y); 
                     break;
                 case 2:
@@ -47,7 +46,6 @@ function solveDepth(x, y) {
             return;
         }
     }
-
     backtrack();
 }
 
@@ -97,7 +95,6 @@ function solveBreadth() {
     let parents = [];
     let curr = 0;
     let directions = ["up", "down", "left", "right"];
-    let t0 = performance.now();
     for (let y = 0; y < gridSize; y++){
         parents.push([]);
         for (let x = 0; x < gridSize; x++){
@@ -107,15 +104,12 @@ function solveBreadth() {
     queue.push([0,0]);
     while (queue.length > curr) {  
         if (isArrayInArray(queue, [gridSize-1, gridSize-1])) {
-            let t1 = performance.now();
-            console.log("Solving took " + (t1 - t0) + " miliseconds");
             break;
         }
         let pair = queue[curr++];
         let x = pair[0];
         let y = pair[1];
         setTimeout( function() { $("#" + x.toString() + "-" + y.toString()).css("background-color", "lightgreen"); }, ++i*speed);
-        console.log("x and y for this loop is " , x, y);
         for (const direction of directions){
             switch (direction) {
                 case "up":
@@ -146,7 +140,6 @@ function solveBreadth() {
         }
     }
     setTimeout( function() { clearMazeSolution(); }, ++i*speed);
-    console.log(parents);
     setTimeout( function() { $("#" + (gridSize-1).toString() + "-" + (gridSize-1).toString()).css("background-color", "lightgreen"); }, ++i*speed);
     let sol = parents[gridSize-1][gridSize-1];
     while (sol !== -1){
@@ -158,9 +151,9 @@ function solveBreadth() {
 }
 
 function isArrayInArray(arr, item){
-    var item_as_string = JSON.stringify(item);
+    let item_as_string = JSON.stringify(item);
   
-    var contains = arr.some(function(ele){
+    let contains = arr.some(function(ele){
       return JSON.stringify(ele) === item_as_string;
     });
     return contains;
