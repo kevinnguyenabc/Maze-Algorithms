@@ -24,7 +24,7 @@ function createGrid() {
         for(let y = 0; y < gridSize; y++)
         {
 
-            rowHTML += '<td height="' + cellHeight + '" style="border: 2px solid black;" id=' + x + "-" + y + '>  </td>';
+            rowHTML += '<td height="' + cellHeight + '" style="border: 2px solid #00556D;" id=' + x + "-" + y + '>  </td>';
         }
         rowHTML += "</tr>";
         mazeGrid.append(rowHTML);
@@ -54,6 +54,7 @@ function generateMaze() {
         }
     }
     document.getElementById("0-0").style.borderTop = "solid 1px #FFF";
+    let t0 = performance.now();
     if (algo == "depth"){
         createMazeDepth(Math.floor(Math.random() * gridSize), Math.floor(Math.random() * gridSize));
     } else if (algo === "breadth"){
@@ -61,8 +62,11 @@ function generateMaze() {
     } else if (algo === "unionfind"){
         createMazeUnion();
     }
+    let t1 = performance.now();
+    $("#timer").html("Generating took " + (t1 - t0) + " miliseconds");
     $("#" + (gridSize-1).toString() + "-" + (gridSize-1).toString()).css("border-bottom", "solid 1px #FFF");
     setTimeout( function () { $("#createButton").prop("disabled", false); $("#solveButton").prop("disabled", false); }, ++i*speed);
+    // setTimeout( function() { location.reload( forceGet ) }, ++i*speed);
 }
 
 function createMazeDepth(x, y) {
@@ -151,16 +155,22 @@ function createMazeBreadth (firstX, firstY) {
 
 
 function createMazeUnion() {
-    console.log(gridSize);
-    let set = [[gridSize-1, gridSize-2, gridSize-1, gridSize-1]];
-    for (let y = 0; y < (gridSize-1); y++){
-        for (let x = 0; x < (gridSize-1); x++){
-            set.push([x, y, x, y+1]);
-            set.push([x, y, x+1, y]);
+    let set = [];
+    for (let y = 0; y < gridSize; y++){
+        for (let x = 0; x < gridSize; x++){
+            if (y == gridSize-1 && x < gridSize-1){
+                set.push([x, y, x+1, y]);
+            } else if (x == gridSize-1 && y < gridSize -1){
+                set.push([x, y, x, y+1]);
+            } else if (x == gridSize-1 && y == gridSize-1){
+                continue;
+            } else {
+                set.push([x, y, x, y+1]);
+                set.push([x, y, x+1, y]);
+            }
         }
     }
     set.sort((a,b) => 0.5 - Math.random());
-    console.log(set);
     while (set.length > 0) {
         let cells = set.shift();
         // Union Algorithm
@@ -190,6 +200,11 @@ function find(x, y) {
 }
 
 function breakWall(x, y, direction) {
+    let color = "rgb(0, 222, 19, .5)"
+    let transitionDelay = Math.log10(speed)*250;
+    if (speed === "1"){
+        color = "none";
+    }
     switch (direction) { 
         case "up":
             var newX = x-1;
@@ -197,9 +212,11 @@ function breakWall(x, y, direction) {
             mazeState[newX][y][1] = false;
             var id = "#" + newX.toString() + "-" + y.toString();
             var idn = "#" + x.toString() + "-" + y.toString();
+            var delay = ++i*speed;
             setTimeout( function () {
-                $(id).css("border-bottom", "solid 1px #FFF");
-                $(idn).css("border-top", "solid 1px #FFF"); }, ++i*speed);
+                $(id).css({"border-bottom": "solid 1px #FFF", "background-color": color});
+                $(idn).css({"background-color": color, "border-top": "solid 1px #FFF"});
+                setTimeout( function() {blink(id, idn)}, transitionDelay); }, delay);
             break;
         case "down":
             var newX = x+1;
@@ -208,8 +225,9 @@ function breakWall(x, y, direction) {
             var id = "#" + x.toString() + "-" + y.toString();
             var idn = "#" + newX.toString() + "-" + y.toString();
             setTimeout( function () {
-                $(id).css("border-bottom", "solid 1px #FFF");
-                $(idn).css("border-top", "solid 1px #FFF"); }, ++i*speed);
+                $(id).css({"background-color": color, "border-bottom": "solid 1px #FFF"});
+                $(idn).css({"background-color": color, "border-top": "solid 1px #FFF"});
+                setTimeout( function() {blink(id, idn)}, transitionDelay); }, ++i*speed);
             break;
         case "left":
             var newY = y-1;
@@ -218,8 +236,9 @@ function breakWall(x, y, direction) {
             var id = "#" + x.toString() + "-" + newY.toString();
             var idn = "#" + x.toString() + "-" + y.toString();
             setTimeout( function () {
-                $(id).css("border-right", "solid 1px #FFF");
-                $(idn).css("border-left", "solid 1px #FFF"); }, ++i*speed);
+                $(id).css({"background-color": color, "border-right": "solid 1px #FFF"});
+                $(idn).css({"background-color": color, "border-left": "solid 1px #FFF"});
+                setTimeout( function() {blink(id, idn)}, transitionDelay); }, ++i*speed);
             break;
         case "right":
             var newY = y+1;
@@ -228,8 +247,14 @@ function breakWall(x, y, direction) {
             var id = "#" + x.toString() + "-" + y.toString();
             var idn = "#" + x.toString() + "-" + newY.toString();
             setTimeout( function () {
-                $(id).css("border-right", "solid 1px #FFF");
-                $(idn).css("border-left", "solid 1px #FFF"); }, ++i*speed);
+                $(id).css({"border-right": "solid 1px #FFF", "background-color": color});
+                $(idn).css({"background-color": color, "border-left": "solid 1px #FFF"});
+                setTimeout( function() {blink(id, idn)}, transitionDelay); }, ++i*speed);
             break;
     }
+}
+
+function blink(id, idn) {
+    $(id).css({"background-color": "transparent", "transition": "background-color 0.5s"});
+    $(idn).css({"background-color": "transparent", "transition": "background-color 0.5s"});
 }

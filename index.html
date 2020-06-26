@@ -12,7 +12,7 @@
 
     <h1 style="text-align: center; padding-top: 10px; " class="display-4"> Maze </h1>
 
-    <div style="width: 40%; margin:auto; text-align: center; overflow: visible;">
+    <div style="width: 35%; margin:auto; text-align: center; overflow: visible;">
         <div style="margin-top:20px; margin-bottom: 15px; ">
             <div class="form-row" style="margin-bottom: 10px;">
                 <div class="col">
@@ -29,12 +29,12 @@
                 <div class="col">
                     <select id="speed" class="form-control">
                         <optgroup label="Speed">
-                            <option value="160">0.25x</option>
-                            <option value="80">0.5x</option>
-                            <option value="40">1x</option>
-                            <option value="20">2x</option>
-                            <option value="10">4x</option>
-                            <option value="2" selected="selected">Super-Omega Fast</option>
+                            <option value="80">0.25x</option>
+                            <option value="40">0.5x</option>
+                            <option value="20">1x</option>
+                            <option value="10">2x</option>
+                            <option value="5">4x</option>
+                            <option value="1" selected="selected">Super-Omega Fast</option>
                         </optgroup>
                     </select>
                 </div>
@@ -66,6 +66,10 @@
         
     </div>
     <table id="maze-grid" class="table table-bordered" style="margin: auto; width: 40%;"></table>
+    <div style="text-align: center; padding-top: 10px; ">
+        <p id="timer"></p>
+    </div>
+
     <br>
     <br>
 

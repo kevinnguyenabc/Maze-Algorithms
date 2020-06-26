@@ -15,13 +15,13 @@ function solveMaze() {
         solveBreadth();
     }
     let t1 = performance.now();
-    console.log("Solving took " + (t1 - t0) + " miliseconds");
+    $("#timer").html("Solving took " + (t1 - t0) + " miliseconds");
     setTimeout( function () { $("#createButton").prop("disabled", false); $("#solveButton").prop("disabled", false); }, ++i*speed);
 }
 
 function solveDepth(x, y) {
     mazeSolution.push(x.toString() + "-" + y.toString());
-    setTimeout( function() { $("#" + x.toString() + "-" + y.toString()).css("background-color", "lightgreen"); }, ++i*speed);
+    setTimeout( function() { $("#" + x.toString() + "-" + y.toString()).css({"background-color": "#3DE16C", "transition": "none"}); }, ++i*speed);
     if (mazeCompleted()){
         return;
     }
@@ -74,7 +74,7 @@ function wallExists(x,y,direction) {
 
 function backtrack() {
     let id = mazeSolution.pop()
-    setTimeout( function() { $("#" + id).css("background-color", "transparent"); }, ++i*speed);
+    setTimeout( function() { $("#" + id).css({"background-color": "transparent"}); }, ++i*speed);
 }
 
 function mazeCompleted() {
@@ -109,7 +109,7 @@ function solveBreadth() {
         let pair = queue[curr++];
         let x = pair[0];
         let y = pair[1];
-        setTimeout( function() { $("#" + x.toString() + "-" + y.toString()).css("background-color", "lightgreen"); }, ++i*speed);
+        setTimeout( function() { $("#" + x.toString() + "-" + y.toString()).css({"background-color": "#3DE16C", "transition": "none"}); }, ++i*speed);
         for (const direction of directions){
             switch (direction) {
                 case "up":
@@ -140,12 +140,12 @@ function solveBreadth() {
         }
     }
     setTimeout( function() { clearMazeSolution(); }, ++i*speed);
-    setTimeout( function() { $("#" + (gridSize-1).toString() + "-" + (gridSize-1).toString()).css("background-color", "lightgreen"); }, ++i*speed);
+    setTimeout( function() { $("#" + (gridSize-1).toString() + "-" + (gridSize-1).toString()).css({"background-color": "#3DE16C"}); }, ++i*speed);
     let sol = parents[gridSize-1][gridSize-1];
     while (sol !== -1){
         let x = sol[0];
         let y = sol[1];
-        setTimeout( function() { $("#" + x.toString() + "-" + y.toString()).css("background-color", "lightgreen"); }, ++i*speed);
+        setTimeout( function() { $("#" + x.toString() + "-" + y.toString()).css("background-color", "#3DE16C"); }, ++i*speed);
         sol = parents[x][y];
     }
 }
