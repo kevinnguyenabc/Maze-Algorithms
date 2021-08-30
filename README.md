@@ -5,6 +5,7 @@ It uses the generation and solving of mazes in order to visualize how particular
 ## Maze Generation
 
 <img src="/img/MazeGeneration.gif" width="600" height="600"/>
+<img src="/img/MazeGenerationDF.gif" width="600" height="600"/>
 
 Mazes can be generated using 3 different algorithms: depth-first, breadth-first, or union-find.
 
